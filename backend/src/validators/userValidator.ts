@@ -9,31 +9,27 @@ export const registerUserSchema = z
     userName: z.string().trim().min(1, { message: `Username cannot be empty` }),
 
     email: z
-      .string({ required_error: `Email is required` })
+      .string()
       .email({ message: `Invalid Email Address` })
       .trim()
-      .min(1, { message: `Email cannot be empty` }),
+      .min(1, { message: `Email is required` }),
 
     password: z
-      .string({ required_error: `Password is required` })
+      .string()
       .trim()
+      .min(1, { message: `Password is required` })
       .min(6, { message: `At least 6 characters is required` }),
 
-    confirmPassword: z
-      .string({ required_error: `Please confirm your password` })
-      .trim(),
+    confirmPassword: z.string().trim().min(1, { message: `Please confirm your password` }),
   })
   //refine() to compare password
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password don't match",
-    path: ["confirmPassword"], //this will tell zod to show error on which field
+    path: ["confirmPassword"], 
   });
 
 export const loginUserSchema = z.object({
   email: z.string().email({ message: `Invalid Email Address` }).trim(),
 
-  password: z
-    .string({ required_error: `Password is required` })
-    .trim()
-    .min(6, { message: `At least 6 characters is required` }),
+  password: z.string().trim().min(1, { message: `Password is required` }).min(6, { message: `At least 6 characters is required` }),
 });

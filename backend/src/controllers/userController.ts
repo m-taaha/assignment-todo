@@ -1,5 +1,5 @@
-import { User } from "../models/UserModel.ts";
-import jwt from "jsonwebtoken";
+import { User } from "../models/UserModel.js";
+import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import { Request, Response } from "express";
 
 
@@ -53,9 +53,11 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     //generate jwt user token key and send it back
-    const userToken = jwt.sign({ userId: user._id }, process.env.JWT_USER_KEY as string, {
-      expiresIn: process.env.EXPIRES_IN,
-    });
+    const signOptions: SignOptions = ({
+      expiresIn: process.env.EXPIRES_IN ?? "7d",
+    } as unknown) as SignOptions;
+
+    const userToken = jwt.sign({ userId: user._id }, process.env.JWT_USER_KEY as Secret, signOptions);
 
     //set userToken in httpOnly cookies
     res.cookie("userToken", userToken, {
